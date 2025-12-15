@@ -77,7 +77,7 @@ graph TB
 
 ##  Quick Start
 
-### 1-Minute Setup
+### Setup
 
 ```bash
 # Clone/download the project
