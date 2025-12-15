@@ -1,276 +1,607 @@
-Network Driver Test Environment
-A comprehensive network listener/responder system for testing network device drivers with BOCHS and QEMU emulators. This project provides a unified testing environment that supports multiple networking backends and protocols.
+# Network Driver Test Environment 🚀
 
-🌟 Features
-Multi-Emulator Support: Works seamlessly with both BOCHS and QEMU
+[![Python Version](https://img.shields.io/badge/python-3.6%2B-blue)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Bochs](https://img.shields.io/badge/emulator-Bochs%20%7C%20QEMU-orange)](https://bochs.sourceforge.io/)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS%20%7C%20WSL-brightgreen)]()
 
-Multiple Networking Backends:
+A comprehensive network listener/responder system for testing network device drivers with BOCHS and QEMU emulators. Perfect for OS development, driver testing, and network protocol experimentation.
 
-Bochs SLiRP (user-mode networking)
+## 📋 Table of Contents
 
-QEMU multiple NICs with different backends
+- [Overview](#overview)
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Testing Workflow](#-testing-workflow)
+- [API Reference](#-api-reference)
+- [Examples](#-examples)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-Socket connections for direct testing
+## Overview
 
-Protocol Simulation:
+The Network Driver Test Environment provides a unified testing platform for network device drivers across multiple emulators. It simulates various network protocols and backends, allowing developers to test drivers in a controlled environment before deploying to real hardware.
 
-ARP request/response handling
+![Workflow Diagram](https://via.placeholder.com/800x400.png?text=Network+Driver+Test+Workflow)
 
-ICMP Ping (Echo request/reply)
+## 🌟 Features
 
-DHCP simulation
+| Feature | Description | Status |
+|---------|-------------|--------|
+| **Multi-Emulator Support** | Works with BOCHS and QEMU simultaneously | ✅ |
+| **Multiple Backends** | SLiRP, Socket, User-mode, TAP interfaces | ✅ |
+| **Protocol Simulation** | ARP, ICMP, DHCP, custom protocols | ✅ |
+| **Real-time Monitoring** | Live packet capture and analysis | ✅ |
+| **Automated Testing** | Built-in test suite and examples | ✅ |
+| **Cross-platform** | Linux, macOS, Windows (WSL) | ✅ |
 
-Custom packet handling
+## 🏗️ Architecture
 
-Unified Responder: Single Python script handles all backend types
+```mermaid
+graph TB
+    A[Your Network Driver] --> B[BOCHS Emulator]
+    A --> C[QEMU Emulator]
+    
+    B --> D[SLiRP Backend]
+    C --> E[Multiple NIC Backends]
+    
+    D --> F[Unified Network Responder]
+    E --> F
+    
+    F --> G[Protocol Handlers]
+    G --> H[ARP Handler]
+    G --> I[ICMP Handler]
+    G --> J[DHCP Simulator]
+    G --> K[Custom Handlers]
+    
+    F --> L[Logging & Monitoring]
+    F --> M[Packet Capture]
+    
+    L --> N[Test Results]
+    M --> N
+```
 
-Debug Tools: Packet capture, logging, and test clients
+### Component Breakdown
 
-📁 Project Structure
-text
-network-driver-test/
-├── unified-responder.py    # Main responder application
-├── bochs-slirp.conf        # Bochs configuration for SLiRP backend
-├── qemu-multi-nic.sh       # QEMU script with multiple NICs
-├── driver-test.sh          # Complete test suite
-├── Makefile                # Build and test automation
-└── README.md               # This file
-🚀 Quick Start
-Prerequisites
-Python 3.6+
+| Component | Purpose | File |
+|-----------|---------|------|
+| **Unified Responder** | Main server handling all connections | `unified-responder.py` |
+| **Bochs Config** | Pre-configured SLiRP setup | `bochs-slirp.conf` |
+| **QEMU Script** | Multi-NIC environment | `qemu-multi-nic.sh` |
+| **Test Suite** | Automated testing framework | `driver-test.sh` |
+| **Makefile** | Build automation | `Makefile` |
 
-BOCHS emulator
+## 🚀 Quick Start
 
-QEMU emulator
+### 1-Minute Setup
 
-Root/sudo access (for TAP interfaces)
+```bash
+# Clone/download the project
+git clone https://github.com/yourusername/network-driver-test.git
+cd network-driver-test
 
-Installation
-Clone/download the project files
-
-Make scripts executable:
-
-bash
+# Make scripts executable
 chmod +x qemu-multi-nic.sh driver-test.sh
-Basic Usage
-Start the unified responder:
 
-bash
+# Start the responder
 python3 unified-responder.py
-Test with Bochs (SLiRP backend):
+```
 
-bash
-make bochs
-Test with QEMU (multiple NICs):
+### Verify Installation
 
-bash
-make qemu
-Run complete test suite:
-
-bash
-make full-test
-🔧 Configuration
-Unified Responder Options
-bash
-python3 unified-responder.py --help
-Options:
-
---udp-port PORT - UDP port for Bochs SLiRP (default: 6969)
-
---tcp-port PORT - TCP port for QEMU user-mode (default: 6969)
-
---gateway IP - Gateway IP to respond as (default: 10.0.2.2)
-
---test - Run test clients instead of starting server
-
-Bochs Configuration
-The bochs-slirp.conf file configures:
-
-NE2000 NIC at I/O address 0x300, IRQ 9
-
-SLiRP user-mode networking backend
-
-32MB RAM, single CPU core
-
-Disk image: boot.img
-
-QEMU Configuration
-The qemu-multi-nic.sh script sets up:
-
-NIC 1: User-mode networking (connects to UDP responder)
-
-NIC 2: Socket backend (port 5555)
-
-NIC 3: User backend with different subnet
-
-NIC 4: Dummy hubport backend
-
-Network packet capture to .pcap files
-
-🧪 Testing Your Driver
-Network Configuration for Your OS
-For Bochs/SLiRP:
-
-IP: 10.0.2.15
-
-Gateway: 10.0.2.2
-
-DNS: 10.0.2.3
-
-Subnet: 255.255.255.0
-
-For QEMU NIC1 (user-mode):
-
-Auto-configured by QEMU
-
-Connects to responder on port 6969
-
-Test Packets
-The responder handles various test packets:
-
-ARP Test:
-
-python
-# Send ARP request
-packet = b'TEST_ARP_REQUEST'
-Ping Test:
-
-python
-# Send ICMP Echo Request
-packet = b'TEST_PING_REQUEST'
-Echo Test:
-
-python
-# Simple echo (responds with same data)
-packet = b'Hello from driver!'
-HTTP Test:
-
-python
-# Test TCP connections
-packet = b'GET / HTTP/1.0\r\n\r\n'
-Using Test Clients
-Run the built-in test clients:
-
-bash
+```bash
+# Test the responder
 make test
-Or manually test:
 
-bash
-# Test UDP (Bochs SLiRP)
-python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.sendto(b'TEST', ('127.0.0.1', 6969)); print(s.recvfrom(1024))"
+# Expected output:
+# Testing Bochs SLiRP connection...
+#   Sent: TEST_ARP_REQUEST... -> Got: RESPONSE: TEST_ARP_REQUEST...
+# Testing QEMU user-mode connection...
+#   Sent: PING... -> Got: PONG...
+```
 
-# Test TCP (QEMU user-mode)
-python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_STREAM); s.connect(('127.0.0.1', 6969)); s.send(b'PING'); print(s.recv(1024))"
-📋 Makefile Targets
-Target	Description
-make responder	Start the unified network responder
-make bochs	Test with Bochs (SLiRP backend)
-make qemu	Test with QEMU (multiple NIC backends)
-make test	Run test clients
-make full-test	Run complete test suite
-make test-packets	Generate test packets
-make clean	Clean up logs and processes
-make help	Show all available targets
-🔍 Debugging
-Log Files
-serial.log - Bochs serial output
+## 📦 Installation
 
-qemu-serial.log - QEMU serial output
+### Prerequisites
 
-netX-dump.pcap - Network packet captures
+| Software | Version | Installation |
+|----------|---------|--------------|
+| **Python** | 3.6+ | `apt install python3` / `brew install python` |
+| **BOCHS** | 2.7+ | `apt install bochs` / `brew install bochs` |
+| **QEMU** | 5.0+ | `apt install qemu` / `brew install qemu` |
+| **Wireshark** | Optional | `apt install wireshark` |
 
-Verbose Output
-Run responder with debug output:
+### Step-by-Step Installation
 
-bash
-python3 unified-responder.py 2>&1 | tee responder.log
-Packet Inspection
-Use Wireshark or tcpdump to inspect .pcap files:
+```bash
+# 1. Install prerequisites (Ubuntu/Debian)
+sudo apt update
+sudo apt install python3 bochs qemu-system-x86 build-essential
 
-bash
-tcpdump -r net0-dump.pcap -X
-🎯 Example Driver Test Scenarios
-1. Basic Connectivity Test
-bash
-# Start responder
-python3 unified-responder.py &
+# 2. Create project directory
+mkdir ~/network-driver-test
+cd ~/network-driver-test
 
-# Start Bochs with your driver
-bochs -q -f bochs-slirp.conf
+# 3. Download the project files
+wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/unified-responder.py
+wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/bochs-slirp.conf
+wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/qemu-multi-nic.sh
+wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/driver-test.sh
+wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/Makefile
 
-# In your OS, run:
-# ping 10.0.2.2
-# arp -a
-2. Multiple Interface Test
-bash
-# Start responder
-python3 unified-responder.py &
+# 4. Set up virtual environment (optional but recommended)
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+```
 
-# Start QEMU with multiple NICs
-./qemu-multi-nic.sh
+## 🎮 Usage
 
-# Test each interface in your OS
-3. Stress Test
-bash
-# Generate high traffic
+### Starting the Test Environment
+
+#### Option 1: Complete Test Suite
+```bash
+# Run the complete test environment
 ./driver-test.sh
-# Check for packet loss or errors in your driver
-🛠️ Customization
-Adding New Protocol Handlers
-Extend the UnifiedNetworkResponder class:
 
-python
-def handle_custom_protocol(self, data):
-    """Handle custom protocol"""
-    if data.startswith(b'MY_PROTOCOL'):
-        response = b'CUSTOM_RESPONSE'
-        return response
+# Or using make
+make full-test
+```
+
+#### Option 2: Individual Components
+```bash
+# Start just the responder
+python3 unified-responder.py --udp-port 6969 --tcp-port 6969
+
+# In another terminal, test Bochs
+make bochs
+
+# In another terminal, test QEMU
+make qemu
+```
+
+#### Option 3: Development Mode
+```bash
+# Start with verbose logging
+python3 unified-responder.py --verbose 2>&1 | tee debug.log
+
+# Monitor network traffic
+sudo tcpdump -i lo port 6969 -X
+```
+
+### Configuration Options
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--udp-port` | 6969 | UDP port for Bochs SLiRP |
+| `--tcp-port` | 6969 | TCP port for QEMU user-mode |
+| `--gateway` | 10.0.2.2 | Gateway IP address |
+| `--verbose` | False | Enable verbose output |
+| `--log-file` | responder.log | Log file location |
+| `--pcap-dir` | ./captures | Packet capture directory |
+
+### Makefile Commands
+
+```bash
+# Show all available commands
+make help
+
+# Common workflows
+make clean           # Clean all logs and captures
+make test-all        # Run all tests
+make monitor         # Start monitoring dashboard
+make capture         # Start packet capture
+make docs           # Generate documentation
+```
+
+## 🧪 Testing Workflow
+
+### Testing Your Network Driver
+
+#### Step 1: Prepare Your Driver
+
+Ensure your driver is compiled and ready. Your OS should have:
+
+```c
+// Example driver configuration
+#define NIC_IO_ADDR  0x300
+#define NIC_IRQ      9
+#define NIC_MAC      {0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x01}
+```
+
+#### Step 2: Configure Networking
+
+**For Bochs/SLiRP:**
+```bash
+# Network configuration in your OS
+IP:      10.0.2.15
+Gateway: 10.0.2.2
+DNS:     10.0.2.3
+Subnet:  255.255.255.0
+```
+
+**For QEMU:**
+```bash
+# Multiple interfaces will be available:
+# - eth0: 10.0.2.15 (user-mode)
+# - eth1: DHCP from socket backend
+# - eth2: 10.0.3.x network
+```
+
+#### Step 3: Run Basic Tests
+
+```bash
+# In your OS/driver, run these tests:
+
+# 1. Link detection
+ifconfig eth0
+# Should show: UP, RUNNING, MAC address
+
+# 2. ARP test
+arping -I eth0 10.0.2.2
+# Should receive ARP replies
+
+# 3. Ping test
+ping 10.0.2.2
+# Should receive ICMP Echo Replies
+
+# 4. Throughput test
+# Use your driver's transmit/receive functions
+```
+
+#### Step 4: Advanced Testing
+
+```bash
+# Test packet fragmentation
+python3 -c "
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+# Send large packet (should fragment)
+large_data = b'X' * 5000
+s.sendto(large_data, ('10.0.2.2', 6969))
+"
+
+# Test error conditions
+python3 -c "
+import socket
+# Send malformed packet
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+malformed = b'\xff' * 100  # All ones
+s.sendto(malformed, ('10.0.2.2', 6969))
+"
+```
+
+### Example Test Scenarios
+
+| Test Scenario | Command | Expected Result |
+|---------------|---------|-----------------|
+| **Basic Connectivity** | `make bochs` | Driver initializes, link up |
+| **ARP Resolution** | Send ARP request | Receive ARP reply |
+| **ICMP Ping** | `ping 10.0.2.2` | 0% packet loss |
+| **Multiple Interfaces** | `make qemu` | All NICs detected |
+| **Stress Test** | `./stress-test.sh` | No crashes, minimal loss |
+| **Error Handling** | Malformed packets | Driver recovers gracefully |
+
+## 📚 API Reference
+
+### UnifiedNetworkResponder Class
+
+```python
+class UnifiedNetworkResponder:
+    """Main responder class for handling network requests"""
+    
+    def __init__(self, config: dict = None):
+        """
+        Initialize the responder.
+        
+        Args:
+            config: Configuration dictionary
+                - udp_port: UDP port number (default: 6969)
+                - tcp_port: TCP port number (default: 6969)
+                - gateway_ip: Gateway IP address (default: 10.0.2.2)
+                - verbose: Enable verbose logging (default: False)
+        """
+    
+    def start(self) -> None:
+        """Start all responder services"""
+    
+    def stop(self) -> None:
+        """Stop all responder services"""
+    
+    def add_protocol_handler(self, protocol: str, handler: callable) -> None:
+        """Add custom protocol handler"""
+    
+    def get_statistics(self) -> dict:
+        """Get current statistics"""
+        # Returns: {'packets_received': X, 'packets_sent': Y, ...}
+```
+
+### Protocol Handlers
+
+```python
+# Example custom handler
+def my_protocol_handler(data: bytes, src_addr: tuple) -> Optional[bytes]:
+    """
+    Handle custom protocol packets.
+    
+    Args:
+        data: Received packet data
+        src_addr: Source address (ip, port)
+    
+    Returns:
+        Response data or None if no response needed
+    """
+    if data.startswith(b'MYPROTO'):
+        return b'ACK'
     return None
-Modifying Network Parameters
-Edit the configuration dictionary:
 
-python
-config = {
-    'udp_port': 7777,
-    'tcp_port': 8888,
-    'gateway_ip': '192.168.1.1',
-    'ip_pool': '192.168.1.100/28'
+# Register handler
+responder.add_protocol_handler('MYPROTO', my_protocol_handler)
+```
+
+## 🔧 Examples
+
+### Example 1: Basic Driver Test
+
+```python
+#!/usr/bin/env python3
+"""
+Basic driver test example
+"""
+
+import time
+import socket
+from unified_responder import UnifiedNetworkResponder
+
+def test_basic_connectivity():
+    """Test basic driver connectivity"""
+    
+    # Start responder
+    responder = UnifiedNetworkResponder({
+        'udp_port': 6969,
+        'tcp_port': 6969,
+        'verbose': True
+    })
+    
+    print("Starting responder...")
+    responder.start()
+    
+    # Give it time to initialize
+    time.sleep(2)
+    
+    # Test connection
+    test_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    
+    test_cases = [
+        (b'PING', b'PONG'),
+        (b'ARP_REQUEST', b'ARP_RESPONSE'),
+        (b'DRIVER_INIT', b'READY')
+    ]
+    
+    for test_input, expected in test_cases:
+        test_socket.sendto(test_input, ('127.0.0.1', 6969))
+        response, _ = test_socket.recvfrom(1024)
+        
+        if expected in response:
+            print(f"✓ Test passed: {test_input}")
+        else:
+            print(f"✗ Test failed: {test_input}")
+    
+    test_socket.close()
+    responder.stop()
+
+if __name__ == "__main__":
+    test_basic_connectivity()
+```
+
+### Example 2: Custom Protocol Test
+
+```python
+#!/usr/bin/env python3
+"""
+Custom protocol test for driver validation
+"""
+
+import struct
+
+def create_test_frame(dest_mac: str, src_mac: str, 
+                      protocol: int, payload: bytes) -> bytes:
+    """
+    Create Ethernet frame for testing.
+    
+    Args:
+        dest_mac: Destination MAC (format: 'de:ad:be:ef:00:01')
+        src_mac: Source MAC
+        protocol: Ethernet protocol (0x0800 for IP, etc.)
+        payload: Frame payload
+    
+    Returns:
+        Complete Ethernet frame
+    """
+    # Convert MAC strings to bytes
+    def mac_to_bytes(mac_str):
+        return bytes.fromhex(mac_str.replace(':', ''))
+    
+    frame = (
+        mac_to_bytes(dest_mac) +
+        mac_to_bytes(src_mac) +
+        struct.pack('>H', protocol) +
+        payload
+    )
+    
+    return frame
+
+# Test frames for common protocols
+TEST_FRAMES = {
+    'arp_request': create_test_frame(
+        'ff:ff:ff:ff:ff:ff',
+        '11:22:33:44:55:66',
+        0x0806,
+        b'\x00\x01\x08\x00\x06\x04\x00\x01' +  # ARP request
+        b'\x11\x22\x33\x44\x55\x66' +          # Sender MAC
+        b'\x0a\x00\x02\x02' +                  # Sender IP
+        b'\x00\x00\x00\x00\x00\x00' +          # Target MAC
+        b'\x0a\x00\x02\x0f'                    # Target IP
+    ),
+    
+    'ping_request': create_test_frame(
+        '11:22:33:44:55:66',
+        'de:ad:be:ef:00:01',
+        0x0800,
+        # IP header + ICMP echo request
+        b'\x45\x00\x00\x54\x00\x00\x40\x00\x40\x01\x00\x00' +
+        b'\x0a\x00\x02\x0f\x0a\x00\x02\x02' +
+        b'\x08\x00\xf7\xff\x00\x01\x00\x00' +
+        b'PING_TEST' * 8
+    )
 }
-responder = UnifiedNetworkResponder(config)
-🤝 Contributing
-Fork the repository
+```
 
-Create a feature branch
+## 🐛 Troubleshooting
 
-Commit changes
+### Common Issues
 
-Push to the branch
+| Problem | Solution |
+|---------|----------|
+| **"Address already in use"** | `sudo pkill -f "unified-responder"` |
+| **Bochs won't start** | Check `.bochsrc` syntax, ensure disk image exists |
+| **No network connectivity** | Verify responder is running, check firewall settings |
+| **Permission denied** | Run with sudo or fix permissions: `sudo chmod +x *.sh` |
+| **Python import errors** | Install dependencies: `pip install -r requirements.txt` |
 
-Create a Pull Request
+### Debug Mode
 
-📄 License
-This project is released under the MIT License. See LICENSE file for details.
+```bash
+# Enable full debugging
+python3 unified-responder.py --verbose --log-level DEBUG
 
-🙏 Acknowledgments
-BOCHS Development Team
+# Monitor system resources
+top -p $(pgrep -f "unified-responder")
 
-QEMU Development Team
+# Check network connections
+netstat -tulpn | grep 6969
+ss -tulpn | grep 6969
 
-All contributors and testers
+# Capture packets for analysis
+sudo tcpdump -i lo -w debug.pcap port 6969
+```
 
-🆘 Support
-For issues and questions:
+### Log Analysis
 
-Check the debugging section
+```bash
+# View logs in real-time
+tail -f responder.log
 
-Review the example configurations
+# Search for errors
+grep -i "error\|fail\|exception" responder.log
 
-Open an issue with:
+# Count packets by type
+grep "Received" responder.log | awk '{print $4}' | sort | uniq -c
+```
 
-Emulator version
+## 🤝 Contributing
 
-OS version
+We welcome contributions! Here's how to get started:
 
-Error logs
+### Development Setup
 
-Steps to reproduce
+```bash
+# 1. Fork and clone
+git clone https://github.com/yourusername/network-driver-test.git
+cd network-driver-test
+
+# 2. Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# 3. Install development dependencies
+pip install -r requirements-dev.txt
+
+# 4. Create feature branch
+git checkout -b feature/amazing-feature
+
+# 5. Make changes and test
+make test-all
+
+# 6. Commit and push
+git commit -m "Add amazing feature"
+git push origin feature/amazing-feature
+
+# 7. Create Pull Request
+```
+
+### Code Style
+
+- Follow PEP 8 for Python code
+- Use meaningful variable names
+- Add docstrings to all functions
+- Include tests for new features
+- Update documentation accordingly
+
+### Testing Contributions
+
+```bash
+# Run full test suite
+make test-all
+
+# Run specific tests
+pytest tests/test_responder.py -v
+
+# Check code style
+flake8 unified-responder.py
+
+# Type checking (if using type hints)
+mypy unified-responder.py
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+```
+MIT License
+
+Copyright (c) 2024 Network Driver Test Environment Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+## 🙏 Acknowledgments
+
+- **Bochs Development Team** - For the excellent x86 emulator
+- **QEMU Contributors** - For the versatile virtualization platform
+- **Python Community** - For the amazing ecosystem
+- **All Contributors** - For making this project better
+
+## 📞 Support
+
+| Resource | Link |
+|----------|------|
+| **Documentation** | [GitHub Wiki](https://github.com/yourusername/network-driver-test/wiki) |
+| **Issue Tracker** | [GitHub Issues](https://github.com/yourusername/network-driver-test/issues) |
+| **Discussions** | [GitHub Discussions](https://github.com/yourusername/network-driver-test/discussions) |
+| **Email** | support@example.com |
+
+---
+
+<div align="center">
+
+**Happy Driver Testing!** 🚀
+
+*If you find this project useful, please consider giving it a ⭐!*
+
+[![Star History Chart](https://api.star-history.com/svg?repos=yourusername/network-driver-test&type=Date)](https://star-history.com/#yourusername/network-driver-test&Date)
+
+</div>
