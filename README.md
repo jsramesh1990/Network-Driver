@@ -343,7 +343,7 @@ def my_protocol_handler(data: bytes, src_addr: tuple) -> Optional[bytes]:
 responder.add_protocol_handler('MYPROTO', my_protocol_handler)
 ```
 
-## 🔧 Examples
+##  Examples
 
 ### Example 1: Basic Driver Test
 
@@ -585,10 +585,7 @@ copies or substantial portions of the Software.
 - **Python Community** - For the amazing ecosystem
 - **All Contributors** - For making this project better
 
-## 📞 Support
-
-| Resource | Link |
-|----------|------|
+##  Support
 
 | **Email** | js.ramesh1990@gmail.com |
 
