@@ -1,4 +1,4 @@
-# Network Driver Test Environment 🚀
+# Network Driver Test Environment 
 
 [![Python Version](https://img.shields.io/badge/python-3.6%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
@@ -7,7 +7,7 @@
 
 A comprehensive network listener/responder system for testing network device drivers with BOCHS and QEMU emulators. Perfect for OS development, driver testing, and network protocol experimentation.
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Overview](#overview)
 - [Features](#-features)
@@ -28,18 +28,18 @@ The Network Driver Test Environment provides a unified testing platform for netw
 
 ![Workflow Diagram](https://via.placeholder.com/800x400.png?text=Network+Driver+Test+Workflow)
 
-## 🌟 Features
+##  Features
 
 | Feature | Description | Status |
 |---------|-------------|--------|
-| **Multi-Emulator Support** | Works with BOCHS and QEMU simultaneously | ✅ |
-| **Multiple Backends** | SLiRP, Socket, User-mode, TAP interfaces | ✅ |
-| **Protocol Simulation** | ARP, ICMP, DHCP, custom protocols | ✅ |
-| **Real-time Monitoring** | Live packet capture and analysis | ✅ |
-| **Automated Testing** | Built-in test suite and examples | ✅ |
-| **Cross-platform** | Linux, macOS, Windows (WSL) | ✅ |
+| **Multi-Emulator Support** | Works with BOCHS and QEMU simultaneously | 
+| **Multiple Backends** | SLiRP, Socket, User-mode, TAP interfaces | 
+| **Protocol Simulation** | ARP, ICMP, DHCP, custom protocols | 
+| **Real-time Monitoring** | Live packet capture and analysis | 
+| **Automated Testing** | Built-in test suite and examples | 
+| **Cross-platform** | Linux, macOS, Windows (WSL) | 
 
-## 🏗️ Architecture
+##  Architecture
 
 ```mermaid
 graph TB
@@ -75,7 +75,7 @@ graph TB
 | **Test Suite** | Automated testing framework | `driver-test.sh` |
 | **Makefile** | Build automation | `Makefile` |
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### 1-Minute Setup
 
@@ -104,7 +104,7 @@ make test
 #   Sent: PING... -> Got: PONG...
 ```
 
-## 📦 Installation
+##  Installation
 
 ### Prerequisites
 
@@ -139,7 +139,7 @@ source venv/bin/activate
 pip install --upgrade pip
 ```
 
-## 🎮 Usage
+##  Usage
 
 ### Starting the Test Environment
 
@@ -198,7 +198,7 @@ make capture         # Start packet capture
 make docs           # Generate documentation
 ```
 
-## 🧪 Testing Workflow
+##  Testing Workflow
 
 ### Testing Your Network Driver
 
@@ -286,7 +286,7 @@ s.sendto(malformed, ('10.0.2.2', 6969))
 | **Stress Test** | `./stress-test.sh` | No crashes, minimal loss |
 | **Error Handling** | Malformed packets | Driver recovers gracefully |
 
-## 📚 API Reference
+##  API Reference
 
 ### UnifiedNetworkResponder Class
 
@@ -461,7 +461,7 @@ TEST_FRAMES = {
 }
 ```
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Common Issues
 
@@ -503,7 +503,7 @@ grep -i "error\|fail\|exception" responder.log
 grep "Received" responder.log | awk '{print $4}' | sort | uniq -c
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 We welcome contributions! Here's how to get started:
 
@@ -558,7 +558,7 @@ flake8 unified-responder.py
 mypy unified-responder.py
 ```
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -578,7 +578,7 @@ The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 ```
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **Bochs Development Team** - For the excellent x86 emulator
 - **QEMU Contributors** - For the versatile virtualization platform
@@ -589,18 +589,13 @@ copies or substantial portions of the Software.
 
 | Resource | Link |
 |----------|------|
-| **Documentation** | [GitHub Wiki](https://github.com/yourusername/network-driver-test/wiki) |
-| **Issue Tracker** | [GitHub Issues](https://github.com/yourusername/network-driver-test/issues) |
-| **Discussions** | [GitHub Discussions](https://github.com/yourusername/network-driver-test/discussions) |
-| **Email** | support@example.com |
+
+| **Email** | js.ramesh1990@gmail.com |
 
 ---
 
 <div align="center">
 
-**Happy Driver Testing!** 🚀
-
-*If you find this project useful, please consider giving it a ⭐!*
 
 [![Star History Chart](https://api.star-history.com/svg?repos=yourusername/network-driver-test&type=Date)](https://star-history.com/#yourusername/network-driver-test&Date)
 
