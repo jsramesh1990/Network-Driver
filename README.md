@@ -126,14 +126,7 @@ sudo apt install python3 bochs qemu-system-x86 build-essential
 mkdir ~/network-driver-test
 cd ~/network-driver-test
 
-# 3. Download the project files
-wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/unified-responder.py
-wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/bochs-slirp.conf
-wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/qemu-multi-nic.sh
-wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/driver-test.sh
-wget https://raw.githubusercontent.com/yourusername/network-driver-test/main/Makefile
-
-# 4. Set up virtual environment (optional but recommended)
+# 3. Set up virtual environment (optional but recommended)
 python3 -m venv venv
 source venv/bin/activate
 pip install --upgrade pip
